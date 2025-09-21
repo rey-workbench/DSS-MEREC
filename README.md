@@ -35,6 +35,8 @@ npm install dss-merec
 
 ### Quick Start
 
+**CommonJS (Node.js):**
+
 ```javascript
 const { Merec } = require("dss-merec");
 
@@ -48,6 +50,34 @@ const matrix = [
 
 // Define criteria types
 const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
+
+// Calculate criteria weights
+const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+
+console.log("Criteria weights:", weights);
+// Output: [0.3519, 0.1917, 0.1998, 0.2566]
+```
+
+**ES Modules (TypeScript/Modern JS):**
+
+```typescript
+import { Merec } from "dss-merec";
+
+// Define your decision matrix
+const matrix = [
+  [8, 7, 6, 5], // Alternative 1
+  [6, 8, 7, 6], // Alternative 2
+  [7, 6, 8, 7], // Alternative 3
+  [5, 9, 5, 8], // Alternative 4
+];
+
+// Define criteria types
+const criteriaTypes: ("benefit" | "cost")[] = [
+  "benefit",
+  "benefit",
+  "cost",
+  "benefit",
+];
 
 // Calculate criteria weights
 const weights = Merec.CalculateWeight(matrix, criteriaTypes);
@@ -176,6 +206,8 @@ npm install dss-merec
 
 ### Memulai Cepat
 
+**CommonJS (Node.js):**
+
 ```javascript
 const { Merec } = require("dss-merec");
 
@@ -189,6 +221,34 @@ const matrix = [
 
 // Definisikan tipe kriteria
 const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
+
+// Hitung bobot kriteria
+const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+
+console.log("Bobot kriteria:", weights);
+// Output: [0.3519, 0.1917, 0.1998, 0.2566]
+```
+
+**ES Modules (TypeScript/Modern JS):**
+
+```typescript
+import { Merec } from "dss-merec";
+
+// Definisikan matriks keputusan Anda
+const matrix = [
+  [8, 7, 6, 5], // Alternatif 1
+  [6, 8, 7, 6], // Alternatif 2
+  [7, 6, 8, 7], // Alternatif 3
+  [5, 9, 5, 8], // Alternatif 4
+];
+
+// Definisikan tipe kriteria
+const criteriaTypes: ("benefit" | "cost")[] = [
+  "benefit",
+  "benefit",
+  "cost",
+  "benefit",
+];
 
 // Hitung bobot kriteria
 const weights = Merec.CalculateWeight(matrix, criteriaTypes);

@@ -1,13 +1,13 @@
 /**
- * Contoh sederhana penggunaan MEREC dengan method CalculateWeight (CommonJS)
+ * Contoh sederhana penggunaan MEREC dengan method CalculateWeight (ES Modules)
  */
 
-const { Merec } = require("./dist/index.cjs");
+import { Merec } from "./dist/index.esm.mjs";
 
-console.log("CONTOH PENGGUNAAN MEREC - COMMONJS");
+console.log("CONTOH PENGGUNAAN MEREC - ES MODULES");
 console.log("=" + "=".repeat(50));
 
-// Data matrix: setiap baris = alternatif, set  iap kolom = kriteria
+// Data matrix: setiap baris = alternatif, setiap kolom = kriteria
 const matrix = [
   [8, 7, 6, 5], // Alternatif 1
   [6, 8, 7, 6], // Alternatif 2
