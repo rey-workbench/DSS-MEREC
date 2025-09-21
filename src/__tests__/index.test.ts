@@ -1,13 +1,9 @@
-import { Merec } from "../index";
+import { calculateMerecWeights, CriteriaType } from "../index";
 
 describe("Package Exports", () => {
-  it("should export Merec class", () => {
-    expect(Merec).toBeDefined();
-    expect(typeof Merec).toBe("function");
-  });
-
-  it("should have CalculateWeight static method", () => {
-    expect(typeof Merec.CalculateWeight).toBe("function");
+  it("should export calculateMerecWeights function", () => {
+    expect(calculateMerecWeights).toBeDefined();
+    expect(typeof calculateMerecWeights).toBe("function");
   });
 
   it("should calculate weights correctly", () => {
@@ -17,14 +13,14 @@ describe("Package Exports", () => {
       [7, 6, 8, 7],
     ];
 
-    const criteriaTypes: ("benefit" | "cost")[] = [
+    const criteriaTypes: CriteriaType[] = [
       "benefit",
       "benefit",
       "cost",
       "benefit",
     ];
 
-    const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+    const weights = calculateMerecWeights(matrix, criteriaTypes);
 
     expect(Array.isArray(weights)).toBe(true);
     expect(weights).toHaveLength(4);

@@ -1,367 +1,543 @@
 # DSS MEREC
 
-[![npm version](https://badge.fury.io/js/dss-merec.svg)](https://badge.fury.io/js/dss-merec)
-[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-**Languages**: [English](#english) | [Bahasa Indonesia](#bahasa-indonesia)
+**Decision Support System menggunakan metode MEREC (Method based on the Removal Effects of Criteria) untuk Multi-Criteria Decision Making dan penentuan bobot kriteria.**
 
 ---
 
-## English
+## Deskripsi
 
-Implementation of MEREC (Method based on Removal Effects of Criteria) algorithm for calculating criteria weights in multi-criteria decision making systems.
+MEREC (Method based on the Removal Effects of Criteria) adalah metode pengambilan keputusan multi-kriteria yang menentukan bobot kriteria berdasarkan efek penghapusan setiap kriteria terhadap kinerja keseluruhan alternatif.
 
-### Overview
+Package ini mengimplementasikan algoritma MEREC dengan pendekatan functional programming yang sederhana dan mudah digunakan.
 
-MEREC (Method based on the Removal Effects of Criteria) is a modern multi-criteria decision-making (MCDM) method that determines **criteria weights** based on the removal effects of each criterion on the overall performance of alternatives.
+---
 
-**Important**: MEREC is only for calculating criteria weights, not for ranking alternatives. Use the generated weights for other MCDM methods like TOPSIS, SAW, or WASPAS.
-
-### Features
-
-- **Pure MEREC Implementation**: Clean implementation of MEREC algorithm for weighting
-- **TypeScript Support**: Full TypeScript support with comprehensive type definitions
-- **Well Tested**: Comprehensive test suite with various edge cases
-- **Easy to Use**: Simple API with sensible defaults
-- **Configurable**: Customizable options for different use cases
-- **Well Documented**: Complete documentation with examples
-
-### Installation
+## Instalasi
 
 ```bash
-npm install dss-merec
+npm install merec-dss
 ```
 
-### Quick Start
+---
 
-**CommonJS (Node.js):**
+## Penggunaan
+
+### CommonJS
 
 ```javascript
-const { Merec } = require("dss-merec");
+const { calculateMerecWeights } = require("merec-dss");
 
-// Define your decision matrix
+// Data matrix: setiap baris = alternatif, setiap kolom = kriteria
 const matrix = [
-  [8, 7, 6, 5], // Alternative 1
-  [6, 8, 7, 6], // Alternative 2
-  [7, 6, 8, 7], // Alternative 3
-  [5, 9, 5, 8], // Alternative 4
+  [8, 7, 6, 5], // Alternatif 1
+  [6, 8, 7, 6], // Alternatif 2
+  [7, 6, 8, 7], // Alternatif 3
+  [5, 9, 5, 8], // Alternatif 4
 ];
 
-// Define criteria types
+// Tipe kriteria: "benefit" = semakin besar semakin baik, "cost" = semakin kecil semakin baik
 const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
 
-// Calculate criteria weights
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
-
-console.log("Criteria weights:", weights);
-// Output: [0.3519, 0.1917, 0.1998, 0.2566]
-```
-
-**ES Modules (TypeScript/Modern JS):**
-
-```typescript
-import { Merec } from "dss-merec";
-
-// Define your decision matrix
-const matrix = [
-  [8, 7, 6, 5], // Alternative 1
-  [6, 8, 7, 6], // Alternative 2
-  [7, 6, 8, 7], // Alternative 3
-  [5, 9, 5, 8], // Alternative 4
-];
-
-// Define criteria types
-const criteriaTypes: ("benefit" | "cost")[] = [
-  "benefit",
-  "benefit",
-  "cost",
-  "benefit",
-];
-
-// Calculate criteria weights
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
-
-console.log("Criteria weights:", weights);
-// Output: [0.3519, 0.1917, 0.1998, 0.2566]
-```
-
-### API Reference
-
-#### Static Method
-
-**`Merec.CalculateWeight(matrix, criteriaTypes)`**
-
-Calculate criteria weights using MEREC algorithm.
-
-**Parameters:**
-
-- `matrix` (number[][]): Decision matrix where rows = alternatives, columns = criteria
-- `criteriaTypes` (("benefit" | "cost")[]): Array of criteria types
-
-**Returns:**
-
-- `number[]`: Array of criteria weights [0-1] that sum to 1.0
-
-**Example:**
-
-```javascript
-const matrix = [
-  [4.5, 25, 150000], // Alternative 1: [rating, reviews, price]
-  [3.8, 65, 72000], // Alternative 2
-  [4.2, 95, 88000], // Alternative 3
-];
-
-const criteriaTypes = ["benefit", "benefit", "cost"];
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
-```
-
-### Criteria Types
-
-- **"benefit"**: Higher values are better (e.g., quality, performance, rating)
-- **"cost"**: Lower values are better (e.g., price, distance, time)
-
-### Input Validation
-
-The method includes comprehensive input validation:
-
-```javascript
 try {
-  const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+  // Hitung bobot menggunakan MEREC
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+
+  console.log("Bobot Kriteria:");
+  weights.forEach((weight, i) => {
+    const percentage = (weight * 100).toFixed(2);
+    console.log(`C${i + 1}: ${weight.toFixed(6)} (${percentage}%)`);
+  });
+
+  // Verifikasi total = 1
+  const total = weights.reduce((sum, w) => sum + w, 0);
+  console.log(`Total: ${total.toFixed(6)}`);
 } catch (error) {
   console.error("Error:", error.message);
-  // Possible errors:
-  // - "Matrix tidak boleh kosong" (Empty matrix)
-  // - "Tipe kriteria tidak boleh kosong" (Empty criteria types)
-  // - "Jumlah kolom matrix (X) harus sama dengan jumlah tipe kriteria (Y)"
-  // - "Baris X harus memiliki Y kolom" (Inconsistent row lengths)
 }
 ```
 
-### Algorithm Details
-
-The MEREC algorithm follows these steps:
-
-1. **Decision Matrix Creation**: Organize alternatives and criteria into a matrix
-2. **Normalization**: Apply MEREC-specific normalization
-   - Benefit criteria: `n_ij = x_ij / max(x_j)`
-   - Cost criteria: `n_ij = min(x_j) / x_ij`
-3. **Overall Performance**: Calculate `S_i = ln(1 + (1/m) * Σ|ln(n_ij)|)`
-4. **Removal Effects**: Calculate performance without each criterion
-5. **Deviation Calculation**: Measure impact of removing each criterion
-6. **Weight Determination**: Calculate weights based on removal effects
-
-**Output**: Criteria weights array that can be used for other MCDM methods.
-
-### Performance Considerations
-
-- **Time Complexity**: O(m×n²) where m = alternatives, n = criteria
-- **Space Complexity**: O(m×n)
-- **Recommended Limits**: < 1000 alternatives, < 50 criteria for optimal performance
-
-### Integration with Other MCDM Methods
-
-Use MEREC weights with other decision-making methods:
+### ES Modules
 
 ```javascript
-// Calculate weights with MEREC
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+import { calculateMerecWeights } from "merec-dss";
 
-// Use with TOPSIS
-const topsisResult = topsis(matrix, weights, criteriaTypes);
+const matrix = [
+  [8, 7, 6, 5],
+  [6, 8, 7, 6],
+  [7, 6, 8, 7],
+  [5, 9, 5, 8],
+];
 
-// Use with SAW (Simple Additive Weighting)
-const sawResult = saw(matrix, weights, criteriaTypes);
+const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
 
-// Use with WASPAS
-const waspasResult = waspas(matrix, weights, criteriaTypes);
+try {
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+
+  console.log("Hasil Bobot MEREC:");
+  weights.forEach((weight, i) => {
+    console.log(`Kriteria ${i + 1}: ${(weight * 100).toFixed(2)}%`);
+  });
+} catch (error) {
+  console.error("Error:", error.message);
+}
+```
+
+### Browser (UMD)
+
+```html
+<script src="https://unpkg.com/merec-dss/lib/index.umd.js"></script>
+<script>
+  const { calculateMerecWeights } = DSSMerec;
+
+  const matrix = [
+    [8, 7, 6, 5],
+    [6, 8, 7, 6],
+    [7, 6, 8, 7],
+  ];
+
+  const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
+
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+  console.log("Bobot kriteria:", weights);
+</script>
 ```
 
 ---
 
-## Bahasa Indonesia
+## API Reference
 
-Implementasi algoritma MEREC (Method based on Removal Effects of Criteria) untuk menghitung bobot kriteria dalam sistem pengambilan keputusan multi-kriteria.
-
-### Gambaran Umum
-
-MEREC (Method based on the Removal Effects of Criteria) adalah metode pengambilan keputusan multi-kriteria modern yang menentukan **bobot kriteria** berdasarkan efek penghapusan setiap kriteria terhadap kinerja keseluruhan alternatif.
-
-**Penting**: MEREC hanya untuk menghitung bobot kriteria, bukan untuk ranking alternatif. Gunakan bobot yang dihasilkan untuk metode MCDM lain seperti TOPSIS, SAW, atau WASPAS.
-
-### Fitur
-
-- **Implementasi MEREC Murni**: Implementasi bersih algoritma MEREC untuk pembobotan
-- **Dukungan TypeScript**: Dukungan penuh TypeScript dengan definisi tipe lengkap
-- **Teruji dengan Baik**: Test suite komprehensif dengan berbagai edge case
-- **Mudah Digunakan**: API sederhana dengan pengaturan default yang masuk akal
-- **Dapat Dikonfigurasi**: Opsi yang dapat disesuaikan untuk berbagai use case
-- **Dokumentasi Lengkap**: Dokumentasi lengkap dengan contoh-contoh
-
-### Instalasi
-
-```bash
-npm install dss-merec
-```
-
-### Memulai Cepat
-
-**CommonJS (Node.js):**
-
-```javascript
-const { Merec } = require("dss-merec");
-
-// Definisikan matriks keputusan Anda
-const matrix = [
-  [8, 7, 6, 5], // Alternatif 1
-  [6, 8, 7, 6], // Alternatif 2
-  [7, 6, 8, 7], // Alternatif 3
-  [5, 9, 5, 8], // Alternatif 4
-];
-
-// Definisikan tipe kriteria
-const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
-
-// Hitung bobot kriteria
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
-
-console.log("Bobot kriteria:", weights);
-// Output: [0.3519, 0.1917, 0.1998, 0.2566]
-```
-
-**ES Modules (TypeScript/Modern JS):**
-
-```typescript
-import { Merec } from "dss-merec";
-
-// Definisikan matriks keputusan Anda
-const matrix = [
-  [8, 7, 6, 5], // Alternatif 1
-  [6, 8, 7, 6], // Alternatif 2
-  [7, 6, 8, 7], // Alternatif 3
-  [5, 9, 5, 8], // Alternatif 4
-];
-
-// Definisikan tipe kriteria
-const criteriaTypes: ("benefit" | "cost")[] = [
-  "benefit",
-  "benefit",
-  "cost",
-  "benefit",
-];
-
-// Hitung bobot kriteria
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
-
-console.log("Bobot kriteria:", weights);
-// Output: [0.3519, 0.1917, 0.1998, 0.2566]
-```
-
-### Referensi API
-
-#### Method Static
-
-**`Merec.CalculateWeight(matrix, criteriaTypes)`**
+### `calculateMerecWeights(matrix, criteriaTypes, epsilon?)`
 
 Menghitung bobot kriteria menggunakan algoritma MEREC.
 
-**Parameter:**
+#### Parameters
 
-- `matrix` (number[][]): Matriks keputusan dimana baris = alternatif, kolom = kriteria
-- `criteriaTypes` (("benefit" | "cost")[]): Array tipe kriteria
+- **`matrix`** `number[][]` - Matrix keputusan (m x n) dimana m = jumlah alternatif, n = jumlah kriteria
+- **`criteriaTypes`** `CriteriaType[]` - Array tipe kriteria untuk setiap kolom
+- **`epsilon`** `number` _(optional)_ - Nilai epsilon untuk menghindari pembagian dengan nol (default: 1e-10)
 
-**Returns:**
+#### Returns
 
-- `number[]`: Array bobot kriteria [0-1] yang berjumlah 1.0
+- **`number[]`** - Array bobot kriteria yang sudah dinormalisasi (total = 1)
 
-**Contoh:**
+#### Types
+
+```typescript
+type CriteriaType = "benefit" | "cost";
+```
+
+- **`"benefit"`** - Kriteria benefit (semakin besar nilai semakin baik)
+- **`"cost"`** - Kriteria cost (semakin kecil nilai semakin baik)
+
+#### Contoh
 
 ```javascript
 const matrix = [
-  [4.5, 25, 150000], // Alternatif 1: [rating, review, harga]
-  [3.8, 65, 72000], // Alternatif 2
-  [4.2, 95, 88000], // Alternatif 3
+  [100, 80, 75], // Alternatif A
+  [90, 85, 80], // Alternatif B
+  [85, 90, 70], // Alternatif C
 ];
 
 const criteriaTypes = ["benefit", "benefit", "cost"];
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+
+const weights = calculateMerecWeights(matrix, criteriaTypes);
+// Output: [0.334, 0.333, 0.333] (contoh)
 ```
 
-### Tipe Kriteria
+---
 
-- **"benefit"**: Nilai lebih tinggi lebih baik (contoh: kualitas, performa, rating)
-- **"cost"**: Nilai lebih rendah lebih baik (contoh: harga, jarak, waktu)
+## Langkah Algoritma MEREC
 
-### Validasi Input
+1. **MER-01**: Membuat matriks keputusan (X)
+2. **MER-02**: Normalisasi matriks menggunakan formula MEREC
+3. **MER-03**: Menghitung kinerja keseluruhan (Si)
+4. **MER-04**: Menghitung kinerja setelah penghapusan kriteria (Si')
+5. **MER-05**: Menghitung deviasi absolut (Ei)
+6. **MER-06**: Menentukan bobot akhir kriteria (Wi)
 
-Method ini menyertakan validasi input yang komprehensif:
+---
+
+## Contoh Lengkap
 
 ```javascript
+const { calculateMerecWeights } = require("merec-dss");
+
+// Contoh kasus: Pemilihan smartphone
+const smartphones = [
+  [8, 7, 6, 5, 9], // iPhone
+  [6, 8, 7, 6, 7], // Samsung
+  [7, 6, 8, 7, 8], // Xiaomi
+  [5, 9, 5, 8, 6], // OnePlus
+];
+
+// Kriteria: Performa, Kamera, Harga, Baterai, Desain
+const criteriaTypes = ["benefit", "benefit", "cost", "benefit", "benefit"];
+
 try {
-  const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+  console.log("=== ANALISIS BOBOT KRITERIA SMARTPHONE ===");
+
+  const weights = calculateMerecWeights(smartphones, criteriaTypes);
+
+  const criteriaNames = ["Performa", "Kamera", "Harga", "Baterai", "Desain"];
+
+  console.log("\nHasil Bobot Kriteria:");
+  console.log("-".repeat(40));
+
+  weights.forEach((weight, i) => {
+    const percentage = (weight * 100).toFixed(2);
+    console.log(
+      `${criteriaNames[i].padEnd(10)}: ${weight.toFixed(6)} (${percentage}%)`
+    );
+  });
+
+  // Ranking kriteria berdasarkan kepentingan
+  const ranked = weights
+    .map((weight, index) => ({
+      name: criteriaNames[index],
+      weight,
+      percentage: (weight * 100).toFixed(2),
+    }))
+    .sort((a, b) => b.weight - a.weight);
+
+  console.log("\nRanking Kepentingan Kriteria:");
+  console.log("-".repeat(40));
+  ranked.forEach((item, rank) => {
+    console.log(`${rank + 1}. ${item.name}: ${item.percentage}%`);
+  });
+
+  console.log("\nInterpretasi:");
+  console.log(
+    `- Kriteria paling penting: ${ranked[0].name} (${ranked[0].percentage}%)`
+  );
+  console.log(
+    `- Kriteria paling tidak penting: ${ranked[ranked.length - 1].name} (${
+      ranked[ranked.length - 1].percentage
+    }%)`
+  );
 } catch (error) {
   console.error("Error:", error.message);
-  // Kemungkinan error:
-  // - "Matrix tidak boleh kosong"
-  // - "Tipe kriteria tidak boleh kosong"
-  // - "Jumlah kolom matrix (X) harus sama dengan jumlah tipe kriteria (Y)"
-  // - "Baris X harus memiliki Y kolom"
 }
 ```
 
-### Detail Algoritma
+---
 
-Algoritma MEREC mengikuti langkah-langkah berikut:
+## Validasi Input
 
-1. **Pembuatan Matriks Keputusan**: Mengorganisir alternatif dan kriteria ke dalam matriks
-2. **Normalisasi**: Menerapkan normalisasi spesifik MEREC
-   - Kriteria benefit: `n_ij = x_ij / max(x_j)`
-   - Kriteria cost: `n_ij = min(x_j) / x_ij`
-3. **Kinerja Keseluruhan**: Menghitung `S_i = ln(1 + (1/m) * Σ|ln(n_ij)|)`
-4. **Efek Penghapusan**: Menghitung kinerja tanpa setiap kriteria
-5. **Perhitungan Deviasi**: Mengukur dampak penghapusan setiap kriteria
-6. **Penentuan Bobot**: Menghitung bobot berdasarkan efek penghapusan
+Package ini melakukan validasi otomatis terhadap input:
 
-**Output**: Array bobot kriteria yang dapat digunakan untuk metode MCDM lain.
+- Matrix tidak boleh kosong
+- Semua baris matrix harus memiliki jumlah kolom yang sama
+- Jumlah `criteriaTypes` harus sesuai dengan jumlah kolom matrix
+- Nilai matrix akan dikonversi ke positif jika negatif atau nol
 
-### Integrasi dengan Metode MCDM Lain
+---
 
-Gunakan bobot MEREC dengan metode pengambilan keputusan lain:
+## Error Handling
 
 ```javascript
-// Hitung bobot dengan MEREC
-const weights = Merec.CalculateWeight(matrix, criteriaTypes);
-
-// Gunakan dengan TOPSIS
-const topsisResult = topsis(matrix, weights, criteriaTypes);
-
-// Gunakan dengan SAW (Simple Additive Weighting)
-const sawResult = saw(matrix, weights, criteriaTypes);
-
-// Gunakan dengan WASPAS
-const waspasResult = waspas(matrix, weights, criteriaTypes);
+try {
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+  // Berhasil
+} catch (error) {
+  if (error.message.includes("Matrix tidak boleh kosong")) {
+    console.log("Silakan berikan data matrix yang valid");
+  } else if (error.message.includes("harus memiliki")) {
+    console.log("Pastikan semua baris matrix memiliki jumlah kolom yang sama");
+  } else {
+    console.log("Error:", error.message);
+  }
+}
 ```
+
+---
+
+## Compatibility
+
+- **Node.js**: 14.x atau lebih tinggi
+- **Browser**: Chrome 80+, Firefox 72+, Safari 13.1+
+- **TypeScript**: 4.x atau lebih tinggi
+
+---
+
+## Lisensi
+
+MIT License. Lihat file [LICENSE](LICENSE) untuk detail lengkap.
+
+---
+
+## Kontribusi
+
+Kontribusi sangat diterima! Silakan buat issue atau pull request di [GitHub repository](https://github.com/reysilvaa/merec-dss).
+
+---
+
+# DSS MEREC (English)
+
+**Decision Support System using MEREC (Method based on the Removal Effects of Criteria) for Multi-Criteria Decision Making and criteria weight determination.**
+
+---
+
+## Description
+
+MEREC (Method based on the Removal Effects of Criteria) is a multi-criteria decision-making method that determines criteria weights based on the removal effects of each criterion on the overall performance of alternatives.
+
+This package implements the MEREC algorithm with a simple and easy-to-use functional programming approach.
+
+---
+
+## Installation
+
+```bash
+npm install merec-dss
+```
+
+---
+
+## Usage
+
+### CommonJS
+
+```javascript
+const { calculateMerecWeights } = require("merec-dss");
+
+// Data matrix: each row = alternative, each column = criterion
+const matrix = [
+  [8, 7, 6, 5], // Alternative 1
+  [6, 8, 7, 6], // Alternative 2
+  [7, 6, 8, 7], // Alternative 3
+  [5, 9, 5, 8], // Alternative 4
+];
+
+// Criteria types: "benefit" = higher is better, "cost" = lower is better
+const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
+
+try {
+  // Calculate weights using MEREC
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+
+  console.log("Criteria Weights:");
+  weights.forEach((weight, i) => {
+    const percentage = (weight * 100).toFixed(2);
+    console.log(`C${i + 1}: ${weight.toFixed(6)} (${percentage}%)`);
+  });
+
+  // Verify total = 1
+  const total = weights.reduce((sum, w) => sum + w, 0);
+  console.log(`Total: ${total.toFixed(6)}`);
+} catch (error) {
+  console.error("Error:", error.message);
+}
+```
+
+### ES Modules
+
+```javascript
+import { calculateMerecWeights } from "merec-dss";
+
+const matrix = [
+  [8, 7, 6, 5],
+  [6, 8, 7, 6],
+  [7, 6, 8, 7],
+  [5, 9, 5, 8],
+];
+
+const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
+
+try {
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+
+  console.log("MEREC Weight Results:");
+  weights.forEach((weight, i) => {
+    console.log(`Criterion ${i + 1}: ${(weight * 100).toFixed(2)}%`);
+  });
+} catch (error) {
+  console.error("Error:", error.message);
+}
+```
+
+### Browser (UMD)
+
+```html
+<script src="https://unpkg.com/merec-dss/lib/index.umd.js"></script>
+<script>
+  const { calculateMerecWeights } = DSSMerec;
+
+  const matrix = [
+    [8, 7, 6, 5],
+    [6, 8, 7, 6],
+    [7, 6, 8, 7],
+  ];
+
+  const criteriaTypes = ["benefit", "benefit", "cost", "benefit"];
+
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+  console.log("Criteria weights:", weights);
+</script>
+```
+
+---
+
+## API Reference
+
+### `calculateMerecWeights(matrix, criteriaTypes, epsilon?)`
+
+Calculate criteria weights using the MEREC algorithm.
+
+#### Parameters
+
+- **`matrix`** `number[][]` - Decision matrix (m x n) where m = number of alternatives, n = number of criteria
+- **`criteriaTypes`** `CriteriaType[]` - Array of criteria types for each column
+- **`epsilon`** `number` _(optional)_ - Epsilon value to avoid division by zero (default: 1e-10)
+
+#### Returns
+
+- **`number[]`** - Array of normalized criteria weights (total = 1)
+
+#### Types
+
+```typescript
+type CriteriaType = "benefit" | "cost";
+```
+
+- **`"benefit"`** - Benefit criterion (higher values are better)
+- **`"cost"`** - Cost criterion (lower values are better)
+
+#### Example
+
+```javascript
+const matrix = [
+  [100, 80, 75], // Alternative A
+  [90, 85, 80], // Alternative B
+  [85, 90, 70], // Alternative C
+];
+
+const criteriaTypes = ["benefit", "benefit", "cost"];
+
+const weights = calculateMerecWeights(matrix, criteriaTypes);
+// Output: [0.334, 0.333, 0.333] (example)
+```
+
+---
+
+## MEREC Algorithm Steps
+
+1. **MER-01**: Create decision matrix (X)
+2. **MER-02**: Normalize matrix using MEREC formula
+3. **MER-03**: Calculate overall performance (Si)
+4. **MER-04**: Calculate performance after criteria removal (Si')
+5. **MER-05**: Calculate absolute deviation (Ei)
+6. **MER-06**: Determine final criteria weights (Wi)
+
+---
+
+## Complete Example
+
+```javascript
+const { calculateMerecWeights } = require("merec-dss");
+
+// Example case: Smartphone selection
+const smartphones = [
+  [8, 7, 6, 5, 9], // iPhone
+  [6, 8, 7, 6, 7], // Samsung
+  [7, 6, 8, 7, 8], // Xiaomi
+  [5, 9, 5, 8, 6], // OnePlus
+];
+
+// Criteria: Performance, Camera, Price, Battery, Design
+const criteriaTypes = ["benefit", "benefit", "cost", "benefit", "benefit"];
+
+try {
+  console.log("=== SMARTPHONE CRITERIA WEIGHT ANALYSIS ===");
+
+  const weights = calculateMerecWeights(smartphones, criteriaTypes);
+
+  const criteriaNames = ["Performance", "Camera", "Price", "Battery", "Design"];
+
+  console.log("\nCriteria Weight Results:");
+  console.log("-".repeat(40));
+
+  weights.forEach((weight, i) => {
+    const percentage = (weight * 100).toFixed(2);
+    console.log(
+      `${criteriaNames[i].padEnd(12)}: ${weight.toFixed(6)} (${percentage}%)`
+    );
+  });
+
+  // Rank criteria by importance
+  const ranked = weights
+    .map((weight, index) => ({
+      name: criteriaNames[index],
+      weight,
+      percentage: (weight * 100).toFixed(2),
+    }))
+    .sort((a, b) => b.weight - a.weight);
+
+  console.log("\nCriteria Importance Ranking:");
+  console.log("-".repeat(40));
+  ranked.forEach((item, rank) => {
+    console.log(`${rank + 1}. ${item.name}: ${item.percentage}%`);
+  });
+
+  console.log("\nInterpretation:");
+  console.log(
+    `- Most important criterion: ${ranked[0].name} (${ranked[0].percentage}%)`
+  );
+  console.log(
+    `- Least important criterion: ${ranked[ranked.length - 1].name} (${
+      ranked[ranked.length - 1].percentage
+    }%)`
+  );
+} catch (error) {
+  console.error("Error:", error.message);
+}
+```
+
+---
+
+## Input Validation
+
+This package automatically validates inputs:
+
+- Matrix cannot be empty
+- All matrix rows must have the same number of columns
+- Number of `criteriaTypes` must match the number of matrix columns
+- Matrix values will be converted to positive if negative or zero
+
+---
+
+## Error Handling
+
+```javascript
+try {
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
+  // Success
+} catch (error) {
+  if (error.message.includes("Matrix cannot be empty")) {
+    console.log("Please provide valid matrix data");
+  } else if (error.message.includes("must have")) {
+    console.log("Ensure all matrix rows have the same number of columns");
+  } else {
+    console.log("Error:", error.message);
+  }
+}
+```
+
+---
+
+## Compatibility
+
+- **Node.js**: 14.x or higher
+- **Browser**: Chrome 80+, Firefox 72+, Safari 13.1+
+- **TypeScript**: 4.x or higher
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) file for full details.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Citation
-
-If you use this library in academic research, please cite:
-
-```
-Keshavarz-Ghorabaee, M., Zavadskas, E. K., Olfat, L., & Turskis, Z. (2015).
-Multi-criteria inventory classification using a new method of evaluation based on removal effects of criteria (MEREC).
-Informatica, 26(4), 615-632.
-```
-
-## Support
-
-If you encounter any issues or have questions, please file an issue on the GitHub repository.
+Contributions are welcome! Please create an issue or pull request on the [GitHub repository](https://github.com/reysilvaa/merec-dss).

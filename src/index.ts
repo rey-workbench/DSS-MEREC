@@ -6,11 +6,11 @@
  * effects of each criterion on the overall performance of alternatives.
  */
 
-// Export main MEREC class
-export { Merec } from "./merec";
+// Export main calculation function
+export { calculateMerecWeights } from "./merec";
 
-// Export basic types (hanya yang essential)
-export type { Alternative, Criteria, CriteriaType } from "./types";
+// Export basic types
+export type { CriteriaType } from "./types";
 
 // Default export
-export { Merec as default } from "./merec";
+export { calculateMerecWeights as default } from "./merec";

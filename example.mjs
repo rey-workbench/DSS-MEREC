@@ -1,8 +1,8 @@
 /**
- * Contoh sederhana penggunaan MEREC dengan method CalculateWeight (ES Modules)
+ * Contoh sederhana penggunaan MEREC dengan function approach (ES Modules)
  */
 
-import { Merec } from "./dist/index.esm.mjs";
+import { calculateMerecWeights } from "dss-merec";
 
 console.log("CONTOH PENGGUNAAN MEREC - ES MODULES");
 console.log("=" + "=".repeat(50));
@@ -33,8 +33,8 @@ try {
 
   console.log("\nMENGHITUNG BOBOT DENGAN MEREC...");
 
-  // Hitung bobot menggunakan method static
-  const weights = Merec.CalculateWeight(matrix, criteriaTypes);
+  // Hitung bobot menggunakan function
+  const weights = calculateMerecWeights(matrix, criteriaTypes);
 
   console.log("\nHASIL BOBOT KRITERIA:");
   console.log("-".repeat(30));

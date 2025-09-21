@@ -30,15 +30,3 @@ export interface Criteria {
   /** Type of criteria (benefit or cost) */
   type: CriteriaType;
 }
-
-/**
- * Configuration options for MEREC calculation (internal use)
- */
-export interface MerecOptions {
-  /** Epsilon value to avoid log(0) - default: 1e-10 */
-  epsilon?: number;
-  /** Include debug information in results - default: false */
-  includeDebug?: boolean;
-  /** Validate input data - default: true */
-  validateInput?: boolean;
-}
