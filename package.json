@@ -1,8 +1,8 @@
 {
   "name": "merec-dss",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Implementation of MEREC (Method based on Removal Effects of Criteria) algorithm for calculating criteria weights in multi-criteria decision making systems",
-  "type": "commonjs",
+  "type": "module",
   "main": "lib/index.cjs.js",
   "module": "lib/index.esm.js",
   "browser": "lib/index.umd.js",
@@ -52,10 +52,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/reysilvaa/dss-merec.git"
+    "url": "https://github.com/rey-workbench/dss-merec.git"
   },
   "bugs": {
-    "url": "https://github.com/reysilvaa/dss-merec/issues"
+    "url": "https://github.com/rey-workbench/dss-merec/issues"
   },
-  "homepage": "https://github.com/reysilvaa/dss-merec#readme"
+  "homepage": "https://github.com/rey-workbench/dss-merec#readme"
 }
