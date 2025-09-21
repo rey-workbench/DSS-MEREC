@@ -1,0 +1,57 @@
+{
+  "name": "dss-merec",
+  "version": "1.1.2",
+  "description": "Implementation of MEREC (Method based on Removal Effects of Criteria) algorithm for calculating criteria weights in multi-criteria decision making systems",
+  "type": "commonjs",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "merec",
+    "criteria-weights",
+    "multi-criteria-decision-making",
+    "mcdm",
+    "decision-support-system",
+    "weighting-method",
+    "removal-effects",
+    "algorithm"
+  ],
+  "author": "Reynald Silva",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.8",
+    "jest": "^29.7.0",
+    "rollup": "^4.5.0",
+    "ts-jest": "^29.1.1",
+    "tslib": "^2.8.1",
+    "typescript": "^5.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reysilvaa/dss-merec.git"
+  },
+  "bugs": {
+    "url": "https://github.com/reysilvaa/dss-merec/issues"
+  },
+  "homepage": "https://github.com/reysilvaa/dss-merec#readme"
+}
